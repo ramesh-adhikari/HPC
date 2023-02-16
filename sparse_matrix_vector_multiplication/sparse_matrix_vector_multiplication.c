@@ -100,6 +100,33 @@ void sparse_mat_vec_mult_csr_tiling(int *row_ptr, int *col_ind, int *values, con
     }
 }
 
+void sparse_matrix_vector_mult_unrolling(int *row_ptr, int *col_ind, int *values, const int *vec, float *result) {
+   
+    int i, j;
+    int row_start, row_end, col, val;
+    int result_unroll[4];
+    int col_unroll[4];
+    int val_unroll[4];
+   
+     // Iterate over all rows in the sparse matrix
+    for (i = 0; i < N_ROWS; i++) {
+        result[i] = 0; // Initialize result vector with 0
+        row_start = row_ptr[i];
+        row_end = row_ptr[i + 1];
+
+        // Iterate over all non-zero elements in the current row
+        for (j = row_start; j < row_end; j=j+4) {
+            col = col_ind[j];
+            result_unroll[0]=values[j]*col_ind[j];
+            result_unroll[1]=values[j+1]*col_ind[j+1];
+            result_unroll[2]=values[j+2]*col_ind[j+2];
+            result_unroll[3]=values[j+3]*col_ind[j+3];
+
+            result[i] += result_unroll[0]+result_unroll[1]+result_unroll[2]+result_unroll[3];
+        }  
+    }
+}
+
 
 int main() {
 
@@ -124,10 +151,13 @@ int main() {
     gettimeofday(&start, NULL);
     
     // sparse matrix multiplication
-    sparse_matrix_vector_mult(row_ptr,col_ind, values, vec, result);
+    // sparse_matrix_vector_mult(row_ptr,col_ind, values, vec, result);
 
     // sparse matrix multiplication with tiling 
     // sparse_mat_vec_mult_csr_tiling(row_ptr,col_ind, values, vec, result);
+
+    //sparse matrix vector multiplication with outer loop unrolling
+    sparse_matrix_vector_mult_unrolling(row_ptr,col_ind, values, vec, result);
 
      // End timer
     gettimeofday(&end, NULL);
