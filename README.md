@@ -1,5 +1,6 @@
 # HPC (High Performance Computing)
 This repository contains the C/C++ code for high performance computing exercises.
+Note: This repository is only for educational purpose
 
 #### Exercise1: Calculating cache hit/miss ratio
 - Please find the problem details [here](https://github.com/ramesh-adhikari/HPC/blob/master/cash%20hit%20and%20miss%20ratio/question.pdf)
